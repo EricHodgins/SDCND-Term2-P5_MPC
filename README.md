@@ -118,12 +118,12 @@ finally it's orientation error (epsi).
 The actuators are defined by delta (steering angle) and acceleration (a).
 
 The following update equations are used to predict the state at each timestep:
-      * x_[t+1] = x[t] + v[t] * cos(psi[t]) * dt (x position)
-      * y_[t+1] = y[t] + v[t] * sin(psi[t]) * dt (y position)
-      * psi_[t+1] = psi[t] + v[t] / Lf * delta[t] * dt (orientation)
-      * v_[t+1] = v[t] + a[t] * dt (velocity)
-      * cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt (cross track error)
-      * epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt (orientation error)
+* x_[t+1] = x[t] + v[t] * cos(psi[t]) * dt (x position)
+* y_[t+1] = y[t] + v[t] * sin(psi[t]) * dt (y position)
+* psi_[t+1] = psi[t] + v[t] / Lf * delta[t] * dt (orientation)
+* v_[t+1] = v[t] + a[t] * dt (velocity)
+* cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt (cross track error)
+* epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt (orientation error)
       
 ### Reasoning Behind N (timestep length) & dt (elapsed duration between timesteps)
  
