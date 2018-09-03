@@ -130,6 +130,27 @@ The following update equations are used to predict the state at each timestep:
  Ultimately I choose N = 10 and dt = 0.1.  This seemed to work quite well and it was what was choosen from the Udacity's Q&A video.
  Others values choose were N = 20 dt = 0.1 and various others.  This often produced some crazy driving.  Mostly due to it being computationally expensive and too long.
  
+ ### Polynomial Fitting & MPC Preprocessing
+ I essentially took the idea from Udacity's Q&A video to preprocess the waypoints before the MPC procedure.  This simplifies the math. The preprocess step rotates the points to a horizontal line and shifts the car reference angle to 90 degrees.  Here's a code snapshot from main.cpp:
+ 
+           // Simplification steps (rotate points to horizontal line)
+          for (int i = 0; i < ptsx.size(); i++) {
+            // shift car reference angle to 90 degrees
+            double shift_x = ptsx[i] - px;
+            double shift_y = ptsy[i] - py;
+
+            ptsx[i] = (shift_x * cos(0-psi) - shift_y*sin(0-psi));
+            ptsy[i] = (shift_x * sin(0-psi) + shift_y*cos(0-psi));
+          }
+
+          double *ptrx = &ptsx[0];
+          Eigen::Map<Eigen::VectorXd> ptsx_transform(ptrx, 6);
+
+          double *ptry = &ptsy[0];
+          Eigen::Map<Eigen::VectorXd> ptsy_transform(ptry, 6);
+
+          auto coeffs = polyfit(ptsx_transform, ptsy_transform, 3);
+ 
  ### Dealing with Latency
  
  Firstly, I tried not dealing with latency but found eventually the car would crash (especially on turns). So, quickly found out that indeed you need to compensate for this.  Do accomplish this I adjust the state in main.cpp taking into accout 100ms.  Here's a snapshot of the code in main.cpp:
