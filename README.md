@@ -106,3 +106,44 @@ still be compilable with cmake and make./
 
 ## How to write a README
 A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+
+
+
+## MPC Project Rubric Points
+### The Model (MPC)
+
+The state holds 6 parameters. The position of the car (x, y) it's orientation (psi), it's velocity (v), it's CTE (Cross Track Error) &
+finally it's orientation error (epsi).
+
+The actuators are defined by delta (steering angle) and acceleration (a).
+
+The following update equations are used to predict the state at each timestep:
+      * x_[t+1] = x[t] + v[t] * cos(psi[t]) * dt (x position)
+      * y_[t+1] = y[t] + v[t] * sin(psi[t]) * dt (y position)
+      * psi_[t+1] = psi[t] + v[t] / Lf * delta[t] * dt (orientation)
+      * v_[t+1] = v[t] + a[t] * dt (velocity)
+      * cte[t+1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt (cross track error)
+      * epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t] / Lf * dt (orientation error)
+      
+### Reasoning Behind N (timestep length) & dt (elapsed duration between timesteps)
+ 
+ Ultimately I choose N = 10 and dt = 0.1.  This seemed to work quite well and it was what was choosen from the Udacity's Q&A video.
+ Others values choose were N = 20 dt = 0.1 and various others.  This often produced some crazy driving.  Mostly due to it being computationally expensive and too long.
+ 
+ ### Dealing with Latency
+ 
+ Firstly, I tried not dealing with latency but found eventually the car would crash (especially on turns). So, quickly found out that indeed you need to compensate for this.  Do accomplish this I adjust the state in main.cpp taking into accout 100ms.  Here's a snapshot of the code in main.cpp:
+ 
+          double latency = 0.1;
+          double Lf = 2.67;
+
+          state(0) += v * cos(0) * latency;
+          state(1) += v * sin(0) * latency;
+          state(2) += -v/Lf * steer_value * latency;
+          state(3) += throttle_value * latency;
+          state(4) += v * sin(epsi) * latency;
+          state(5) += -v * steer_value/Lf * latency;
+ 
+
+      
+      
